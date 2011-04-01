@@ -16,10 +16,14 @@ module Pdftk
       fields_with_values.each {|field| field.value = nil }
     end
 
-    def export(output_pdf_path, options = {})
-      xfdf_path = Tempfile.new('pdftk-xfdf').path
-      File.open(xfdf_path, 'w'){|f| f << xfdf }
-      system %{pdftk "#{path}" fill_form "#{xfdf_path}" output "#{output_pdf_path}" #{'flatten' if options[:flatten]} #{'verbose' if options[:verbose]}}
+    def export(output_pdf_path=nil, options = {})
+      output=nil
+      Tempfile.open('pdftk-xfdf') do |f|
+          f << xfdf
+          f.flush
+          output=Pdftk.run(%!"#{path}" fill_form "#{f.path}" output "#{output_pdf_path || '-'}" #{options_string(options)}!)
+      end
+      output
     end
 
     def xfdf
@@ -37,7 +41,7 @@ module Pdftk
 
     def fields
       unless @_all_fields
-        field_output = `pdftk "#{path}" dump_data_fields_utf8`
+        field_output = Pdftk.run(%!"#{path}" dump_data_fields!)
         raw_fields   = field_output.split(/^---\n/).reject {|text| text.empty? }
         @_all_fields = raw_fields.map do |field_text|
           attributes = {}
@@ -49,6 +53,16 @@ module Pdftk
       end
       @_all_fields
     end
+    
+    private
+    
+    def options_string(options)
+      opts=[]
+      opts<<'flatten' if options[:flatten]
+      opts<<'drop_xfa' if options[:drop_xfa]
+      opts<<'verbose' if options[:verbose]
+      opts.join(' ')
+    end  
   end
 
 end
