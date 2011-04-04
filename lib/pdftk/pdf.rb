@@ -17,11 +17,12 @@ module Pdftk
     end
 
     def export(output_pdf_path=nil, options = {})
+      output_pdf_path ||= '-'
       output=nil
       Tempfile.open('pdftk-xfdf') do |f|
           f << xfdf
           f.flush
-          output=Pdftk.run(%!"#{path}" fill_form "#{f.path}" output "#{output_pdf_path || '-'}" #{options_string(options)}!)
+          output=Pdftk.run(%!"#{path}" fill_form "#{f.path}" output "#{output_pdf_path}" #{options_string(options)}!)
       end
       output
     end
