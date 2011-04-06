@@ -4,8 +4,9 @@ module Pdftk
   class PDF
     attr_accessor :path
 
-    def initialize path
+    def initialize path, all_fields=nil
       @path = path
+      @_all_fields=all_fields
     end
 
     def fields_with_values
