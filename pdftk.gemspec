@@ -8,5 +8,6 @@ Gem::Specification.new do |s|
   s.email       = 'remi@remitaylor.com'
   s.homepage    = 'http://github.com/remi/pdftk'
 
-  s.add_dependency 'haml'
+  s.add_dependency 'haml', '>= 3.1'
+  s.add_development_dependency('rspec', [">=2.2.0"])
 end
