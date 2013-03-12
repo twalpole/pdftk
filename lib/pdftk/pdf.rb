@@ -33,7 +33,7 @@ module Pdftk
 
       if @fields.any?
         haml_view_path = File.join File.dirname(__FILE__), 'xfdf.haml'
-        Haml::Engine.new(File.read(haml_view_path)).render(self)
+        Haml::Engine.new(File.read(haml_view_path), :format => :xhtml).render(self)
       end
     end
     
